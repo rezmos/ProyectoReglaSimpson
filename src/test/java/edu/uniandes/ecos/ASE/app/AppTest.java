@@ -104,7 +104,7 @@ public class AppTest extends TestCase
       /**
      * #Method
      * 
-     * TestCase5.  Si el valor del resultado actual cumple con un error estimado de 0.05
+     * TestCase5.  Si el valor del resultado actual cumple con un margen de error de 0.05
      * 
      * @author Claudia Marcela Alvarez Ramos
      */
