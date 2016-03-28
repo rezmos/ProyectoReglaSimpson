@@ -19,9 +19,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Archivo {
-    //MOD. Cantidad de lineas 3
-    //Reutilizada. 39
-    //Adicionadas. 26
 	/**
          *  #Method
          *  Este método se encarga de leer el archivo "datos" que se encuentra en el directorio data, cada linea de datos

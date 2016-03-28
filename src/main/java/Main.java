@@ -6,14 +6,14 @@
  * @Version 1.1
  * @Author Claudia Marcela Alvarez Ramos
  */
+import edu.uniandes.ecos.ASE.app.model.EstructuraSimpson;
 import java.util.ArrayList;
 import static spark.Spark.*;
-import edu.uniandes.ecos.ASE.app.model.EstructuraRegresionLineal;
-import static edu.uniandes.ecos.ASE.app.model.RegresionLineal.obtenerDatosRegresionLineal;
 import java.util.LinkedList;
 import java.util.List;
 import util.Archivo;
 import static spark.Spark.get;
+import util.LibreriaFuncionesEstadisticas;
 
 public class Main {
     /**
@@ -26,21 +26,22 @@ public class Main {
      * @return B0
     
      */
+    
+
    public static void main(String[] args) {
 
         port(Integer.valueOf(System.getenv("PORT")));
         staticFileLocation("/public");
-
+        double valoresEsperados [] = {0.35006,0.36757,0.49500};
         get("/regresion-lineal", (req, res) -> {
             String retorno;
-            List<EstructuraRegresionLineal> casosPrueba = new ArrayList<EstructuraRegresionLineal>();
-            LinkedList listaDeDatos = Archivo.leerArchivo();
-            if(listaDeDatos!=null && (listaDeDatos.size()==4)){ 
-               casosPrueba.add(obtenerDatosRegresionLineal((LinkedList)listaDeDatos.get(0), (LinkedList)listaDeDatos.get(2), 2,4,4,4,3));
-               casosPrueba.add(obtenerDatosRegresionLineal((LinkedList)listaDeDatos.get(0), (LinkedList)listaDeDatos.get(3), 3,4,4,4,3));
-               casosPrueba.add(obtenerDatosRegresionLineal((LinkedList)listaDeDatos.get(1), (LinkedList)listaDeDatos.get(2), 2,5,4,4,4));
-               casosPrueba.add(obtenerDatosRegresionLineal((LinkedList)listaDeDatos.get(1), (LinkedList)listaDeDatos.get(3), 3,6,4,4,4));
-             }
+            List<EstructuraSimpson> casosPrueba = new ArrayList<EstructuraSimpson>();
+            LinkedList listaDeDatos = (Archivo.leerArchivo());
+            if(listaDeDatos!=null){
+                for (Object lista : listaDeDatos) {
+                    casosPrueba.add(LibreriaFuncionesEstadisticas.calcularReglaSimpson((LinkedList<Double>)lista));
+                }
+            }
             //dibujarTablaValores.DibujarReporte(casosPrueba);
 
             retorno = "<!DOCTYPE html>"
@@ -65,32 +66,18 @@ public class Main {
                     + "<table id=\"t01\">"
                     + "<tbody>"
                     + "<tr>"
-                    + "<th>Nombre</th>"
-                    + "<th>B0</th>"
-                    + "<th>B1</th>"
-                    + "<th>rxy</th>"
-                    + "<th>r^2</th>"
-                    + "<th>yk</th>"
-                    + "<th>B0</th>"
-                    + "<th>B1</th>"
-                    + "<th>rxy</th>"
-                    + "<th>r^2</th>"
-                    + "<th>yk</th>"
+                    + "<th>x</th>"
+                    + "<th>dof</th>"
+                    + "<th>p(Expected Value)</th>"
+                    + "<th>p(Actual Value)</th>"
                     + "</tr>";
-            int i = 1;
-            for (EstructuraRegresionLineal casoPrueba : casosPrueba) {
+            int i = 0;
+            for (EstructuraSimpson casoPrueba : casosPrueba) {
                 retorno += "<tr>"
-                        + "<td>" + "" + i + "</td>"
-                        + "<td>" + casoPrueba.getB0()+ "</td>"
-                        + "<td>" + casoPrueba.getB1()+ "</td>"
-                        + "<td>" + casoPrueba.getRxy() + "</td>"
-                        + "<td>" + casoPrueba.getR2() + "</td>"
-                        + "<td>" + casoPrueba.getYk() + "</td>"
-                        + "<td>" + casoPrueba.getB0()+ "</td>"
-                        + "<td>" + casoPrueba.getB1()+ "</td>"
-                        + "<td>" + casoPrueba.getRxy() + "</td>"
-                        + "<td>" + casoPrueba.getR2() + "</td>"
-                        + "<td>" + casoPrueba.getYk() + "</td>"
+                        + "<td>" + casoPrueba.getNombre() + "</td>"
+                        + "<td>" + casoPrueba.getDof()+ "</td>"
+                        + "<td>" + casoPrueba.getP()+ "</td>"
+                        + "<td>" + valoresEsperados[i]+ "</td>"
                         + "</tr>";
                 i++;
             }

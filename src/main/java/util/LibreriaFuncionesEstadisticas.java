@@ -2,12 +2,13 @@
  * Esta clase es una libreria de funciones estadisticas
  *
  * Fecha de creacion: Febrero 28 de 2016
- *
+ * Fecha de modificación: Marzo 24 de 2016
  * @Version 1.2
  * @Author Claudia Marcela Alvarez Ramos
  */
 
 package util;
+import edu.uniandes.ecos.ASE.app.model.EstructuraSimpson;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -15,10 +16,6 @@ import java.util.LinkedList;
 
 
 public class LibreriaFuncionesEstadisticas {
-    //MOD. Cantidad de lineas. 1
-    //Reutilizada. 11
-    //Adicionadas. 2	
-    //eliminadas. 1
     /**
      * #Method
      * Este método se encarga de sumar todos los datos de la coleccion recibida por paramentros
@@ -197,6 +194,11 @@ public class LibreriaFuncionesEstadisticas {
          * @param lista
          * @param media
          * @author Claudia Marcela Alvarez Ramos
+         * @return 	/**
+         * Este método se encarga de calcular la desviacion estandar
+         * @param lista
+         * @param media
+         * @author Claudia Marcela Alvarez Ramos
          * @return 
          */
         
@@ -227,7 +229,55 @@ public class LibreriaFuncionesEstadisticas {
 		BigDecimal b0p = new BigDecimal(numero);
                 return (b0p.setScale(decimals, RoundingMode.HALF_UP)).doubleValue();
 	}
-        
+         /**
+         * #Method
+         * 
+         * Este método se encarga de calcular el logaritmo natural por elemento de la lista y retorna
+         * una nueva lista con todos los elementos con su ln.
+         * 
+         * @param lista
+         * @author Claudia Marcela Alvarez Ramos
+         * @return el promedio de la lista recibida por parametros
+         */
+	public static LinkedList<Double> calcularLnPorElemento(LinkedList<Double> lista){
+                LinkedList<Double> lValores = new LinkedList<Double>();
+                for (Double valor : lista) {
+                    lValores.add(LibreriaFuncionesEstadisticas.redondear(Math.log(valor),4));
+                }
+		return lValores;
+	}
+         /**
+         * #Method
+         * 
+         * Este método se encarga de calcular el logaritmo natural por elemento de la lista y retorna
+         * una nueva lista con todos los elementos con su ln.
+         * 
+         * @param lista
+         * @author Claudia Marcela Alvarez Ramos
+         * @return la estructura simpson 
+         */
+         public static EstructuraSimpson calcularReglaSimpson(LinkedList<Double> lista){
+            EstructuraSimpson e= new EstructuraSimpson((LinkedList<Double>)lista);
+            LinkedList<Double> rTemp= new LinkedList<Double>();
+            double c1 = 0;
+            double c2 = 0;
+            double c3 = 0;
+            double c4 = 0;
+            for (int i = 0; i <= e.getNumSegmentos(); i++) {
+                 c1=redondear(i*e.getW(),2);
+                 c2=redondear(1+(Math.pow(c1, 2)/e.getDof()),5);
+                 c3=redondear(Math.pow(c2, -((e.getDof()+1)/2)),5);
+                 c4=redondear(c3*e.getCons(),5);
+                 if(i==0 ||i==10)
+                    rTemp.add(redondear(e.getW()/3*c4,4));
+                 else if(i%2==0)
+                     rTemp.add(redondear(e.getW()/3*c4*2,4));
+                 else
+                     rTemp.add(redondear(e.getW()/3*c4*4,4));
+            }
+            e.setP(sumar(rTemp));
+            return e;
+        }
         /**
          * #Method
          * 
@@ -264,4 +314,54 @@ public class LibreriaFuncionesEstadisticas {
 	  }  
 	  return true;  
 	}
+        /**
+         * #Method
+         * 
+         * Este método se encarga de retornar verdadero si es entero de lo contrario retornara falso
+         * 
+         * @param str
+         * @author Claudia Marcela Alvarez Ramos
+         * @return true si es un numero, de lo contrario false
+         */
+        public static boolean esEntero(Double valor){
+            return (valor%1==0?true:false);
+        }
+        
+        /**
+         * #Method
+         * 
+         * Este método se encarga de calcular el valor gamma entero para la regla de simpson
+         * 
+         * @param gamma
+         * @author Claudia Marcela Alvarez Ramos
+         * @return el valor gama
+         */
+        
+        public static Double calcularGamaEntera(Double gamma){
+            if(gamma==1)
+                return gamma;
+            else
+                return calcularGamaEntera(gamma -1)*(gamma-1);
+        }
+        
+        /**
+         * #Method
+         * 
+         * Este método se encarga de calcular el valor gamma decimal para la regla de simpson
+         * 
+         * @param gamma
+         * @author Claudia Marcela Alvarez Ramos
+         * @return el valor gama
+         */
+        
+        public static Double calcularGamaDecimal(Double gamma){
+            if(gamma==0.5)
+                return (gamma)*Math.sqrt(Math.PI);
+            else
+                return calcularGamaDecimal(gamma -1)*(gamma);
+        }
+
+        
+        
+       
 }

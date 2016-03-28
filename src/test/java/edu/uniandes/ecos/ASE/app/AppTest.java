@@ -1,8 +1,7 @@
 package edu.uniandes.ecos.ASE.app;
 
 
-import edu.uniandes.ecos.ASE.app.model.EstructuraRegresionLineal;
-import static edu.uniandes.ecos.ASE.app.model.RegresionLineal.obtenerDatosRegresionLineal;
+import edu.uniandes.ecos.ASE.app.model.EstructuraSimpson;
 import java.util.LinkedList;
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -15,6 +14,7 @@ import util.Archivo;
 public class AppTest extends TestCase
 {
     private LinkedList listaDeDatos = Archivo.leerArchivo();
+    private EstructuraSimpson eSimpson = null;
     /**
      * Create the test case
      *
@@ -44,74 +44,81 @@ public class AppTest extends TestCase
     /**
      * #Method
      * 
-     * TestCase1
+     * TestCase1. La linea leida debe tener 4 elementos unicamente (0. Rango Inicial, 1. Rango Final, 2. numero de segmentos, 3. dof)
      * 
      * @author Claudia Marcela Alvarez Ramos
      */
     public void testCase1()
     {
-        EstructuraRegresionLineal case1 = obtenerDatosRegresionLineal((LinkedList)listaDeDatos.get(0), (LinkedList)listaDeDatos.get(2), 2,4,4,4,3);
-        assertEquals(case1.getB0(), -22.55);
-        assertEquals(case1.getB1(), 1.7279);
-        assertEquals(case1.getRxy(),0.9545);
-        assertEquals(case1.getR2(),0.9111);
-        assertEquals(case1.getYk(),644.429);
+        if(listaDeDatos!=null){
+            assertEquals(((LinkedList<Double>)listaDeDatos.get(0)).size()==4, true);
+            assertEquals(((LinkedList<Double>)listaDeDatos.get(1)).size()==4, true);
+            assertEquals(((LinkedList<Double>)listaDeDatos.get(2)).size()==4, true);
+        }
     }
     
      /**
      * #Method
      * 
-     * TestCase2
+     * TestCase2 Evaluar que el rango sea valido (Esto quiere decir, donde el primer valor del rango sea mayor o igual a cero
+     * y el segundo valor del rango sea mayor al primero)
      * 
      * @author Claudia Marcela Alvarez Ramos
      * 
      */
     public void testCase2()
     {
-        EstructuraRegresionLineal case2 = obtenerDatosRegresionLineal((LinkedList)listaDeDatos.get(0), (LinkedList)listaDeDatos.get(3), 3,4,4,4,3);
-        assertEquals(case2.getB0(), -4.039);
-        assertEquals(case2.getB1(), 0.1681);
-        assertEquals(case2.getRxy(),0.9333);
-        assertEquals(case2.getR2(),0.8711);
-        assertEquals(case2.getYk(),60.858);
+        LinkedList<Double> listaValores = ((LinkedList<Double>)listaDeDatos.get(0));
+        if(listaValores.get(0)>=0 && listaValores.get(1)>listaValores.get(0))
+            assertTrue(true);
+        
     }
     
      /**
      * #Method
      * 
-     * TestCase3
+     * TestCase3. Evaluar que numero de segmentos sea positivo mayor que cero
      * 
      * @author Claudia Marcela Alvarez Ramos
      */
     
-    public void testCase3()
-    {
-        EstructuraRegresionLineal case3 = obtenerDatosRegresionLineal((LinkedList)listaDeDatos.get(1), (LinkedList)listaDeDatos.get(2), 2,5,4,4,4);
-        assertEquals(case3.getB0(), -23.92);
-        assertEquals(case3.getB1(), 1.43097);
-        assertEquals(case3.getRxy(),0.9631);
-        assertEquals(case3.getR2(),0.9276);
-        assertEquals(case3.getYk(),528.4294);
+      public void testCase3(){
+        LinkedList<Double> listaValores = ((LinkedList<Double>)listaDeDatos.get(0));
+        assertEquals(listaValores.get(2)>0,true);
     }
     
      /**
      * #Method
      * 
-     * TestCase4
+     * TestCase4. Evaluar que la variable dof sea positivo mayor que cero
      * 
      * @author Claudia Marcela Alvarez Ramos
      */
     
     public void testCase4()
     {
-        EstructuraRegresionLineal case4 = obtenerDatosRegresionLineal((LinkedList)listaDeDatos.get(1), (LinkedList)listaDeDatos.get(3), 3,6,4,4,4);
-        assertEquals(case4.getB0(), -4.604);
-        assertEquals(case4.getB1(), 0.140164);
-        assertEquals(case4.getRxy(),0.948);
-        assertEquals(case4.getR2(),0.8988);
-        assertEquals(case4.getYk(),49.4994);
+        LinkedList<Double> listaValores = ((LinkedList<Double>)listaDeDatos.get(0));
+        assertEquals(listaValores.get(3)>0,true);
+    }
+    
+      /**
+     * #Method
+     * 
+     * TestCase5.  Si el valor del resultado actual cumple con un error estimado de 0.05
+     * 
+     * @author Claudia Marcela Alvarez Ramos
+     */
+    
+    public void testCase5()
+    {
+        EstructuraSimpson e1 = new EstructuraSimpson(((LinkedList<Double>)listaDeDatos.get(0)));
+        EstructuraSimpson e2 = new EstructuraSimpson(((LinkedList<Double>)listaDeDatos.get(1)));
+        EstructuraSimpson e3 = new EstructuraSimpson(((LinkedList<Double>)listaDeDatos.get(2)));
+        assertEquals((e1.getP()-0.35006)<0.05,true);
+        assertEquals((e2.getP()-0.36757)<0.05,true);
+        assertEquals((e3.getP()-0.49500)<0.05,true);
     }
     
     
-    
 }
+
