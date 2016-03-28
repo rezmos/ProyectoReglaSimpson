@@ -33,7 +33,7 @@ public class Main {
         port(Integer.valueOf(System.getenv("PORT")));
         staticFileLocation("/public");
         double valoresEsperados [] = {0.35006,0.36757,0.49500};
-        get("/regresion-lineal", (req, res) -> {
+        get("/simpson-rule", (req, res) -> {
             String retorno;
             List<EstructuraSimpson> casosPrueba = new ArrayList<EstructuraSimpson>();
             LinkedList listaDeDatos = (Archivo.leerArchivo());
